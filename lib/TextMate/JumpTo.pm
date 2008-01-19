@@ -32,7 +32,7 @@ our $VERSION = '0.04';
 
 On Mac OS The TextMate editor handles urls of the form
 
-    txmt://open?«arguments»
+    txmt://open?url=file://somefile.pl&line=100
 
 which cause it to jump to the file, line and column specified by the
 arguments. This module is a simple wrapper which uses the Mac OS 'open'
@@ -43,24 +43,29 @@ position. Here's what it looks like:
 
     $ cat ~/.perldb
     use TextMate::JumpTo qw(jumpto);
+    use File::Spec;
 
     sub afterinit {
         $trace |= 4;    # Enable watchfunction
 
         # Needed to work out where filenames are relative to
         chomp( $base_dir = `pwd` );
+
+        $option{animate} = 0;
+        push @options, 'animate';
     }
 
     sub watchfunction {
         my ( $package, $file, $line ) = @_;
+        return unless $DB::single || $option{animate};
         local $trace = 0;
         if ( $file =~ /^\(eval\s+\d+\)\[(.+?):(\d+)\]/ ) {
             $file = $1;
             $line += $2 - 1;
         }
         $file = File::Spec->rel2abs( $file, $base_dir );
-        jumpto( file => $file, line => $line, bg => 1 )
-          if substr( $file, 0, length( $base_dir ) ) eq $base_dir;
+        jumpto( file => $file, line => $line, bg => 1 );
+        return 1;
     }
 
 =head1 INTERFACE 
@@ -76,19 +81,19 @@ Possible arguments are:
 
 =over
 
-=item * C<file>
+=item C<file>
 
 The path to the file to go to.
 
-=item * C<line>
+=item C<line>
 
 The (one based) line number to go to.
 
-=item * C<column>
+=item C<column>
 
 The (one based) column to go to.
 
-=item * C<bg>
+=item C<bg>
 
 True to leave TextMate in the background. By default a call to C<jumpto>
 will bring TextMate to the foreground.
