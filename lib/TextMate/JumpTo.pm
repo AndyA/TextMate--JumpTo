@@ -53,6 +53,11 @@ position. Here's what it looks like:
 
     sub watchfunction {
         my ( $package, $file, $line ) = @_;
+        local $trace = 0;
+        if ( $file =~ /^\(eval\s+\d+\)\[(.+?):(\d+)\]/ ) {
+            $file = $1;
+            $line += $2 - 1;
+        }
         $file = File::Spec->rel2abs( $file, $base_dir );
         jumpto( file => $file, line => $line, bg => 1 )
           if substr( $file, 0, length( $base_dir ) ) eq $base_dir;

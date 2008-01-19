@@ -1,5 +1,10 @@
 Revision history for TextMate-JumpTo
 
 0.01	2008-01-19
-        - Initial release.
+        Initial release.
 
+0.02	2008-01-19
+	Added example ~/.perldb
+
+0.03	2008-01-19
+	Fixed example .perldb to handle string evals correctly.
