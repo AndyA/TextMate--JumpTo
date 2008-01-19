@@ -2,6 +2,13 @@ package TextMate::JumpTo;
 
 use warnings;
 use strict;
+use HTML::Tiny;
+use File::Spec;
+use Carp;
+
+use base qw(Exporter);
+
+our @EXPORT_OK = qw(jumpto);
 
 =head1 NAME
 
@@ -17,15 +24,67 @@ our $VERSION = '0.01';
 
 =head1 SYNOPSIS
 
-    use TextMate::JumpTo;
+    use TextMate::JumpTo qw(jumpto);
+    
+    jumpto( file => 'mysrc.pl', line => 123 );
   
 =head1 DESCRIPTION
 
 =head1 INTERFACE 
 
-=head2 C<< somfunc >>
+=head2 C<< jumpto >>
+
+Instruct TextMate to jump to the specified file, line and column. The
+arguments are a list of key, value pairs:
+
+    jumpto( file => 'splendid.pl', line => 12, column => 3 );
+
+Possible arguments are:
+
+=over
+
+=item * C<file>
+
+The path to the file to go to.
+
+=item * C<line>
+
+The (one based) line number to go to.
+
+=item * C<column>
+
+The (one based) column to go to.
+
+=item * C<bg>
+
+True to leave TextMate in the background. By default a call to C<jumpto>
+will bring TextMate to the foreground.
+
+=back
 
 =cut
+
+sub jumpto {
+    croak
+      "Odd number of args to jumpto, needs a list of key => value pairs"
+      if @_ % 2;
+    my %args = @_;
+    my $bg   = delete $args{bg};
+    croak "You must supply one or more of file, line, column"
+      unless grep defined $args{$_}, qw(file line column);
+    if ( my $file = delete $args{file} ) {
+        $args{url} = "file://" . File::Spec->rel2abs( $file );
+    }
+    _open( 'txmt://open?' . HTML::Tiny->new->query_encode( \%args ),
+        $bg );
+}
+
+# Open a URL on Mac OS.
+sub _open {
+    my ( $url, $bg ) = @_;
+    my @cmd = ( '/usr/bin/open', ( $bg ? ( '-g' ) : () ), $url );
+    system @cmd and croak "Can't open $url ($?)";
+}
 
 1;
 __END__
