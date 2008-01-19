@@ -16,11 +16,11 @@ TextMate::JumpTo - Tell TextMate to jump to a particular file, line
 
 =head1 VERSION
 
-This document describes TextMate::JumpTo version 0.01
+This document describes TextMate::JumpTo version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -29,6 +29,34 @@ our $VERSION = '0.01';
     jumpto( file => 'mysrc.pl', line => 123 );
   
 =head1 DESCRIPTION
+
+On Mac OS The TextMate editor handles urls of the form
+
+    txmt://open?«arguments»
+
+which cause it to jump to the file, line and column specified by the
+arguments. This module is a simple wrapper which uses the Mac OS 'open'
+command to send TextMate to the specified location.
+
+I use it in my F<~/.perldb> to have TextMate track the current debugger
+position. Here's what it looks like:
+
+    $ cat ~/.perldb
+    use TextMate::JumpTo qw(jumpto);
+
+    sub afterinit {
+        $trace |= 4;    # Enable watchfunction
+
+        # Needed to work out where filenames are relative to
+        chomp( $base_dir = `pwd` );
+    }
+
+    sub watchfunction {
+        my ( $package, $file, $line ) = @_;
+        $file = File::Spec->rel2abs( $file, $base_dir );
+        jumpto( file => $file, line => $line, bg => 1 )
+          if substr( $file, 0, length( $base_dir ) ) eq $base_dir;
+    }
 
 =head1 INTERFACE 
 
