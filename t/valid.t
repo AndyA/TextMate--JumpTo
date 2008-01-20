@@ -65,7 +65,7 @@ plan tests => 2 * @cases;
     no warnings 'redefine';
     *TextMate::JumpTo::_open = sub { push @log, [@_] };
 
-    sub get_log { ( my @got, @log ) = @log }
+    sub get_log { splice @log }
 }
 
 for my $test ( @cases ) {
