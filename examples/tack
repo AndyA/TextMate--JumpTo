@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -16,6 +16,7 @@ my $h = HTML::Tiny->new;
 my ( $oh, $oname ) = tempfile( SUFFIX => '.html' );
 
 print $oh $h->open( 'html' ), $h->head(
+    $h->title( 'Search results' ),
     $h->style(
         do { local $/; <DATA> }
     )
@@ -75,7 +76,7 @@ while ( defined( my $line = <$ack> ) ) {
             }
           : do {
             $pos += length $_;
-            $h->entity_encode( $_ );
+            _ns( $h->entity_encode( $_ ) );
           }
     } @info;
 
@@ -89,19 +90,7 @@ while ( defined( my $line = <$ack> ) ) {
     print $oh $h->tr(
         $tr_style,
         [
-            $h->td(
-                { align => 'right' },
-                $h->a(
-                    {
-                        href => tm_location(
-                            file   => $file,
-                            line   => $line,
-                            column => $column || 1
-                        )
-                    },
-                    $line
-                )
-            ),
+            $h->td( { align => 'right', class => 'ln' }, $line ),
             $h->td( $info )
         ]
     );
@@ -119,22 +108,45 @@ sub _open {
     system @cmd and die "Can't open $url ($?)";
 }
 
+sub _ns {
+    my $s = shift;
+    $s =~ s/\s/&nbsp;/g;
+    return $s;
+}
+
 __DATA__
 
 html, body {
     font-family: monospace;
+    background: black;
+    color: #eee;
+}
+
+a {
+    background: yellow;
+    color: black;
+    text-decoration: none;
+}
+
+.ln {
+    color: #666;
 }
 
 th {
     text-align: left;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid #8f8;
+    color: #8f8;
     padding-top: 10px;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
 }
 
 td {
+    padding: 0px;
+    margin: 0px;
     padding-left: 10px;
 }
 
 .dv td {
-    padding-top: 10px;
+    padding-top: 18px;
 }
