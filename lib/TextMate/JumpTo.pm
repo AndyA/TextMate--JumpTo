@@ -8,7 +8,7 @@ use Carp;
 
 use base qw(Exporter);
 
-our @EXPORT_OK = qw(jumpto);
+our @EXPORT_OK = qw(jumpto tm_location);
 
 =head1 NAME
 
@@ -24,9 +24,11 @@ our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
-    use TextMate::JumpTo qw(jumpto);
+    use TextMate::JumpTo qw(jumpto tm_location);
     
     jumpto( file => 'mysrc.pl', line => 123 );
+    
+    my $textmate_link = tm_location( file => 'foo.t', line => 12 );
   
 =head1 DESCRIPTION
 
@@ -103,18 +105,11 @@ will bring TextMate to the foreground.
 =cut
 
 sub jumpto {
-    croak
-      "Odd number of args to jumpto, needs a list of key => value pairs"
+    croak "Odd number of args, needs a list of key => value pairs"
       if @_ % 2;
     my %args = @_;
     my $bg   = delete $args{bg};
-    croak "You must supply one or more of file, line, column"
-      unless grep defined $args{$_}, qw(file line column);
-    if ( my $file = delete $args{file} ) {
-        $args{url} = "file://" . File::Spec->rel2abs( $file );
-    }
-    _open( 'txmt://open?' . HTML::Tiny->new->query_encode( \%args ),
-        $bg );
+    _open( tm_location( %args ), $bg );
 }
 
 # Open a URL on Mac OS.
@@ -122,6 +117,28 @@ sub _open {
     my ( $url, $bg ) = @_;
     my @cmd = ( '/usr/bin/open', ( $bg ? ( '-g' ) : () ), $url );
     system @cmd and croak "Can't open $url ($?)";
+}
+
+=head2 C<tm_location>
+
+Get a URL using the C<txmt:> scheme that jumps to the specified
+location. Arguments as for C<jumpto> with the exeception of the C<bg>
+switch which makes no sense in this context.
+
+    my $loc = tm_location( file => 'humbile.pm', line => 42 );
+
+=cut
+
+sub tm_location {
+    croak "Odd number of args, needs a list of key => value pairs"
+      if @_ % 2;
+    my %args = @_;
+    croak "You must supply one or more of file, line, column"
+      unless grep defined $args{$_}, qw(file line column);
+    if ( my $file = delete $args{file} ) {
+        $args{url} = "file://" . File::Spec->rel2abs( $file );
+    }
+    return 'txmt://open?' . HTML::Tiny->new->query_encode( \%args );
 }
 
 1;
