@@ -12,4 +12,6 @@ Revision history for TextMate-JumpTo
 0.04	2008-01-20
 	Removed Build.PL.
 
-0.05
+0.05    2008-02-19
+    Made tm_location into a separate function.
+
