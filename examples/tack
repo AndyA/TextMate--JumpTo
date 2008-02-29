@@ -50,9 +50,8 @@ while ( defined( my $line = <$ack> ) ) {
         }
     }
 
-    my $state  = '';
-    my $pos    = 1;
-    my $column = 0;
+    my $state = '';
+    my $pos   = 1;
 
     my $info = join '', map {
             /^\x1b\[(.+)/
@@ -60,7 +59,6 @@ while ( defined( my $line = <$ack> ) ) {
               ? ''
               : do {
                   $state = $1;
-                  $column ||= $pos;
                   $_ eq "\x1b[0m"
                     ? $h->close( 'a' )
                     : $h->open(
@@ -134,7 +132,7 @@ a {
 
 th {
     text-align: left;
-    border-bottom: 1px solid #8f8;
+    border-bottom: 1px solid #222;
     color: #8f8;
     padding-top: 10px;
     padding-bottom: 3px;
