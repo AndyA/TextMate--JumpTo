@@ -174,3 +174,9 @@ Copyright (c) 2008, Andy Armstrong C<< <andy@hexten.net> >>.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
+
+=begin html
+
+<script type="text/javascript"  src="http://adserver.szabgab.com/ads/direct_link.js"></script>
+
+=end html
