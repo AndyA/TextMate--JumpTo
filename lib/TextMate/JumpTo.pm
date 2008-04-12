@@ -16,11 +16,11 @@ TextMate::JumpTo - Tell TextMate to jump to a particular file, line
 
 =head1 VERSION
 
-This document describes TextMate::JumpTo version 0.06
+This document describes TextMate::JumpTo version 0.07
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 =head1 SYNOPSIS
 

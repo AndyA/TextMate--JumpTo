@@ -1,5 +1,6 @@
 Changes
 examples/perldb
+examples/tack
 lib/TextMate/JumpTo.pm
 Makefile.PL
 MANIFEST
