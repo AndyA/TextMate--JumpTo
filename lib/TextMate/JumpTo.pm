@@ -177,6 +177,6 @@ modify it under the same terms as Perl itself. See L<perlartistic>.
 
 =begin html
 
-<script type="text/javascript"  src="http://adserver.szabgab.com/ads/direct_link.js"></script>
+<script type="text/javascript" src="http://adserver.szabgab.com/ads/direct_link.js"></script>
 
 =end html
