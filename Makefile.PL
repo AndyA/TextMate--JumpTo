@@ -6,16 +6,20 @@ require 5.008006;
 
 my $TEXTMATE = '/Applications/TextMate.app';
 
-unless ( $^O =~ /darwin/ ) {
-    warn "TextMate::JumpTo only runs on Mac OS\n" . "Can't continue\n";
-    exit 0;    # == NA test result
+if ( $^O =~ /darwin/ ) {
+    unless ( -d $TEXTMATE ) {
+        warn
+          "$TEXTMATE doesn't exist. Maybe your TextMate is installed\n"
+          . "somewhere else. That's not a problem unless you don't have\n"
+          . "TextMate installed at all. This module needs TextMate in\n"
+          . "order to work.\n";
+    }
 }
-
-unless ( -d $TEXTMATE ) {
-    warn "$TEXTMATE doesn't exist. Maybe your TextMate is installed\n"
-      . "somewhere else. That's not a problem unless you don't have\n"
-      . "TextMate installed at all. This module needs TextMate in\n"
-      . "order to work.\n";
+else {
+    warn
+      "TextMate is only available on Mac OS; this is $^O. You\n"
+      . "will still be able to generate TextMate compatible URLs but\n"
+      . "TextMate::JumpTo::jumpto will not work.\n";
 }
 
 eval 'use ExtUtils::MakeMaker::Coverage';
