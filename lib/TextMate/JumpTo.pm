@@ -70,6 +70,12 @@ position. Here's what it looks like:
         return 1;
     }
 
+=head2 Use on operating systems other than Mac OS
+
+TextMate is only available for Mac OS so on other platforms C<jumpto>
+throws an error. You may, however, still use C<tm_location> to generate
+TextMate compatible URLs.
+
 =head1 INTERFACE
 
 =head2 C<< jumpto >>
